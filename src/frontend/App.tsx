@@ -10,9 +10,9 @@ function App() {
     { id: 'd', title: "CRUD Operations", completed: false },
     { id: 'e', title: "Validation", completed: false },
     { id: 'f', title: "Backend methods", completed: false },
-    { id: 'g', title: "Authentication and Authorization", completed: false },
-    { id: 'h', title: "Deployment", completed: false },
-    { id: 'i', title: "Database", completed: false }
+    { id: 'g', title: "Database", completed: false },
+    { id: 'h', title: "Authentication and Authorization", completed: false },
+    { id: 'i', title: "Deployment", completed: false }
   ]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editingTask, setEditingTask] = useState<Task>();
