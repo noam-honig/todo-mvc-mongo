@@ -1,0 +1,47 @@
+[
+  {
+    "id": "c0819293-7c77-44b6-85bf-947e2fecca2d",
+    "title": "Setup",
+    "completed": true
+  },
+  {
+    "id": "d8b60f53-5473-4fa8-9b22-4f690a0461d4",
+    "title": "Entities",
+    "completed": true
+  },
+  {
+    "id": "dcc37f04-3535-42a3-91bc-c3fb5c3ed94c",
+    "title": "Paging, Sorting and Filtering",
+    "completed": true
+  },
+  {
+    "id": "3649b359-7dd6-4581-82ad-9bd880e35a9c",
+    "title": "CRUD Operations",
+    "completed": true
+  },
+  {
+    "id": "90889f55-9e43-4d83-8146-0f5e4f716fab",
+    "title": "Validation",
+    "completed": true
+  },
+  {
+    "id": "9100d90c-0a42-4e1c-93ea-d999aaf1af1f",
+    "title": "Backend methods",
+    "completed": true
+  },
+  {
+    "id": "d4efe625-4438-438d-9b2d-82babac7e5af",
+    "title": "Database",
+    "completed": false
+  },
+  {
+    "id": "6322db39-9fc6-4edb-b2cb-1a857f1a4e59",
+    "title": "Authentication and Authorization",
+    "completed": false
+  },
+  {
+    "id": "b226a7dd-0cbd-43e2-b143-30346e009586",
+    "title": "Deployment",
+    "completed": false
+  }
+]

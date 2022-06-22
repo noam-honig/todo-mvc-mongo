@@ -1,37 +1,43 @@
 import './App.css';
-import { useState } from "react";
-import { Task } from "./Task"
+import { useEffect, useState } from "react";
+import { Task } from "../shared/Task";
+import { remult } from './common';
+import { ErrorInfo } from 'remult';
+import { TasksController } from '../shared/TasksController';
+const taskRepo = remult.repo(Task);
+function fetchTasks(hideCompleted: boolean) {
+  return taskRepo.find({
+    where: {
+      completed: hideCompleted ? false : undefined
+    }
+  });
+}
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 'a', title: "Setup", completed: true },
-    { id: 'b', title: "Entities", completed: false },
-    { id: 'c', title: "Paging, Sorting and Filtering", completed: false },
-    { id: 'd', title: "CRUD Operations", completed: false },
-    { id: 'e', title: "Validation", completed: false },
-    { id: 'f', title: "Backend methods", completed: false },
-    { id: 'g', title: "Database", completed: false },
-    { id: 'h', title: "Authentication and Authorization", completed: false },
-    { id: 'i', title: "Deployment", completed: false }
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [editingTask, setEditingTask] = useState<Task>();
+  const [editingTask, setEditingTask] = useState<Task & { error?: ErrorInfo<Task> }>();
   const [hideCompleted, setHideCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchTasks(hideCompleted).then(setTasks);
+  }, [hideCompleted]);
 
   const createNewTask = async () => {
     if (newTaskTitle) {
-      const newTask: Task = {
+      const newTask = await taskRepo.insert({
         title: newTaskTitle,
         completed: false,
         id: tasks.length.toString()
-      };
+      });
       setTasks([...tasks, newTask]);
       setNewTaskTitle('');
     }
   }
 
   const setAll = async (completed: boolean) => {
-    setTasks(tasks.map(task => ({ ...task, completed })));
+    await TasksController.setAll(completed);
+    fetchTasks(hideCompleted).then(setTasks);
   }
 
   return (
@@ -62,10 +68,11 @@ function App() {
                 if (!editingTask || task.id != editingTask.id) {
 
                   const setCompleted = async (completed: boolean) => {
-                    const updatedTask: Task = { ...task, completed };
+                    const updatedTask = await taskRepo.save({ ...task, completed });
                     setTasks(tasks.map(t => t === task ? updatedTask : t));
                   }
                   const deleteTask = async () => {
+                    await taskRepo.delete(task);
                     setTasks(tasks.filter(t => t !== task));
                   };
                   return <li key={task.id} className={task.completed ? 'completed' : ''}>
@@ -75,15 +82,20 @@ function App() {
                         onChange={e => setCompleted(e.target.checked)}
                       />
                       <label onDoubleClick={() => setEditingTask(task)}>{task.title}</label>
-                      <button className="destroy" onClick={deleteTask}></button>
+                      {taskRepo.metadata.apiDeleteAllowed&& <button className="destroy" onClick={deleteTask}></button>}
                     </div>
                   </li>
                 }
                 else {
 
                   const saveTask = async () => {
-                    setTasks(tasks.map(t => t === task ? editingTask : t));
-                    setEditingTask(undefined);
+                    try {
+                      const savedTask = await taskRepo.save(editingTask);
+                      setTasks(tasks.map(t => t === task ? savedTask : t));
+                      setEditingTask(undefined);
+                    } catch (error: any) {
+                      setEditingTask({ ...editingTask, error });
+                    }
                   };
                   const titleChange = (title: string) => {
                     setEditingTask({ ...editingTask, title });
@@ -93,6 +105,7 @@ function App() {
                       value={editingTask.title}
                       onBlur={saveTask}
                       onChange={e => titleChange(e.target.value)} />
+                    <span>{editingTask.error?.modelState?.title}</span>
                   </li>
                 }
 
